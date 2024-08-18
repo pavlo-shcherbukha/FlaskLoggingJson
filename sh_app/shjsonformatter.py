@@ -36,6 +36,16 @@ class JSONFormatter(logging.Formatter):
                 message["exc_info"] = record.exc_info
             if record.module:
                 message["module"] = record.module
+
+        if has_request_context():
+            message["url"] = request.url
+            message["remote_addr"] = request.remote_addr
+                    
+        else:
+            record.url = None
+            record.remote_addr = None
+
+
         return json.dumps(message)
     
     def fmttime( self,  logtime ):

@@ -1,17 +1,11 @@
 from datetime import datetime
 from operator import truediv
-from flask import Flask, render_template, request, jsonify, Response
+from flask import Flask, render_template, request, jsonify, Response, has_request_context
+from flask.logging import default_handler
 import json
 import logging
-#import sh_app.jsonlogger
-#from sh_app.jsonlogger import CustomFormatter
-#import json_logging
-
-##import json_log_formatter
-##import sh_app.jformatter
-
-### pvx
-import sh_app.pvxjsonformatter 
+# my own logger
+import sh_app.shjsonformatter 
 
 import datetime
 import sys
@@ -65,72 +59,28 @@ def invalid_api_usager(e):
 
 
 
+class RequestFormatter(logging.Formatter):
+    def format(self, record):
+        if has_request_context():
+            record.url = request.url
+            record.remote_addr = request.remote_addr
+        else:
+            record.url = None
+            record.remote_addr = None
+
+        return super().format(record)
+
+
+
 logging.basicConfig(filename='myapp.log', level=logging.DEBUG)
 
 
-# USE  package json-logging
-# import json_logging
-#json_logging.init_flask(enable_json=True)
-#json_logging.init_request_instrument(application)
-#logger = logging.getLogger("test-logger")
-#logger.setLevel(logging.DEBUG)
-#logger.addHandler(logging.StreamHandler(sys.stdout))
-#def log( a_msg='NoMessage', a_label='logger' ):
-#    logger.info("test log statement")
-
-
-#===================================================
-# Функція внутрішнього логера
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#===================================================
-#logger = logging.getLogger()
-#logHandler = logging.StreamHandler()
-#formatterdef = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#formatter= CustomFormatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#logHandler.setFormatter(formatter)
-#logger.addHandler(logHandler)
-
-
-
-#def log( a_msg='NoMessage', a_label='logger' ):
-#	dttm = datetime.datetime.now()#
-#	ls_dttm = dttm.strftime('%d-%m-%y %I:%M:%S %p')
-#	logger.info(' ['+ls_dttm+'] '+ a_label + ': '+ a_msg)
-#	print(' ['+ls_dttm+'] '+ a_label + ': '+ a_msg)
-
-
-# =============================================
-#formatter = json_log_formatter.JSONFormatter()
-
-#formatter = sh_app.jformatter.CustomisedJSONFormatter()
-
-#json_handler = logging.StreamHandler()
-#json_handler.setFormatter(formatter)
-
-#logger = logging.getLogger('my_json')
-#logger.addHandler(json_handler)
-#logger.setLevel(logging.DEBUG)
-
-#def log( a_msg='NoMessage', a_label='logger' ):
-#	dttm = datetime.datetime.now()
-#	ls_dttm = dttm.strftime('%d-%m-%y %I:%M:%S %p')
-#	logger.info(' ['+ls_dttm+'] '+ a_label + ': '+ a_msg)
-#	#print(' ['+ls_dttm+'] '+ a_label + ': '+ a_msg)
-
-
-# ===========================================================================
-# https://aminalaee.dev/posts/2022/python-json-logging/
-# https://docs.python.org/3/library/logging.html#logrecord-attributes
-# http://web.archive.org/web/20201130054012/https://wtanaka.com/node/8201
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Будемо використовувати свій власний форматтре логів
-# ==========================================================================
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 handler = logging.StreamHandler()
-handler.setFormatter(sh_app.pvxjsonformatter.JSONFormatter())
+handler.setFormatter(sh_app.shjsonformatter.JSONFormatter())
 
 logger.addHandler(handler)
 
