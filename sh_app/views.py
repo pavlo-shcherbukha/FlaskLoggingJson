@@ -72,7 +72,7 @@ class RequestFormatter(logging.Formatter):
 
 
 
-logging.basicConfig(filename='myapp.log', level=logging.DEBUG)
+#logging.basicConfig(filename='myapp.log', level=logging.DEBUG)
 
 
 
@@ -144,7 +144,6 @@ def health():
     result={}
     log('Health check', label)
     try:
-        log('Health check' , 'health')
         result= {}
         result["message"]= title
         result["ok"]=True
@@ -182,8 +181,6 @@ def srvci():
         raise InvalidAPIUsageR( "InvalidAPIRequestParams",  "No  ENV [DB_PORT!]", target=label,status_code=422, payload = {"code": "NoDefined ENV", "description": "Not defined env variable DB_PORT" } )
     if result["DB_NAME"]==None:
         raise InvalidAPIUsageR( "InvalidAPIRequestParams",  "No  ENV [DB_NAME!]", target=label,status_code=422, payload = {"code": "NoDefined ENV", "description": "Not defined env variable DB_NAME" } )
-
-    log('Відправляю результат: ', label)
     return json.dumps( result ), 200, {'Content-Type':'application/json'}
     
 
