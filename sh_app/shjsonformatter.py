@@ -1,15 +1,16 @@
 #pvxjsonformatter
 import json
 import logging
-import subprocess
 import time
-
-
+import os
 class JSONFormatter(logging.Formatter):
     def __init__(self) -> None:
         super().__init__()
-
-        self._ignore_keys = {"msg", "args"}
+        self.def_keys = ['name', 'msg', 'args', 'levelname', 'levelno',
+            'pathname', 'filename', 'module', 'exc_info',
+            'exc_text', 'stack_info', 'lineno', 'funcName',
+            'created', 'msecs', 'relativeCreated', 'thread',
+            'threadName', 'processName', 'process', 'message']
 
     def format(self, record: logging.LogRecord) -> str:
         #message = record.__dict__.copy()
@@ -17,10 +18,10 @@ class JSONFormatter(logging.Formatter):
         message['timestamp']=self.fmttime( record.created )
         message['level'] = record.levelname
         message['label'] = record.name
-        message['ahostname'] = subprocess.getoutput("hostname")
-        message["message"] = record.getMessage()        
+        message['ahostname'] = os.environ.get("HOSTNAME")  
+        message["message"] = record.getMessage() 
         message['ausername'] = None
-        
+
         if record.levelname == "ERROR":
             if record.stack_info:
                 message["stack_info"] = self.formatStack(record.stack_info)
@@ -37,16 +38,16 @@ class JSONFormatter(logging.Formatter):
             if record.module:
                 message["module"] = record.module
 
-        if has_request_context():
-            message["url"] = request.url
-            message["remote_addr"] = request.remote_addr
-                    
-        else:
-            record.url = None
-            record.remote_addr = None
 
+        extra = {k: v for k,v in record.__dict__.items()
+             if k not in self.def_keys}
 
-        return json.dumps(message)
+        if len(extra)>0:
+            message['label'] = 'http_api'
+            message['http_api'] = extra
+
+        retrecord = json.dumps(message, ensure_ascii=False)
+        return retrecord
     
     def fmttime( self,  logtime ):
         tmformat="%Y-%m-%dT%H:%M:%S.%sZ"
