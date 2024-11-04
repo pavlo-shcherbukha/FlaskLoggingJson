@@ -1,5 +1,43 @@
 # FlaskLoggingJson Логування сервісу Python Flask в JSON
 
+
+## Запуск локально
+
+
+ - склонувати репозиторій
+
+```bash
+ git clone https://github.com/pavlo-shcherbukha/FlaskLoggingJson
+
+```
+
+В терміналі Visual Studio Code створити python virtual environment
+
+```bash
+py -m venv env
+```
+
+
+В терміналі Visual Studio Code активувати python virtual environment
+
+
+```bash
+.\env\Scripts\activate.ps1
+```
+
+
+Встановити птрібні пакети python, що перелічені в  файлі requirements.txt
+
+
+```bash
+python.exe -m pip install --upgrade pip
+py -m pip install -r requirements.txt
+```
+Запускати додаток, вибравши  в режимі debug  когфігурацію **sh_app: Win Flask**
+
+
+
+
 ## Корисні ресурси
 
 - [Python JSON Logging](https://aminalaee.dev/posts/2022/python-json-logging/)
